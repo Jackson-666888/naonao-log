@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">闹闹数据记录本猫咪图标</title>
+  <desc id="description">暖橙色背景上的一只微笑猫咪头像</desc>
+  <rect width="512" height="512" rx="112" fill="#fff0e9"/>
+  <circle cx="256" cy="267" r="142" fill="#e85d3f"/>
+  <path d="M143 203 151 91l91 82Z" fill="#e85d3f" stroke="#b93f29" stroke-width="16" stroke-linejoin="round"/>
+  <path d="m369 203-8-112-91 82Z" fill="#e85d3f" stroke="#b93f29" stroke-width="16" stroke-linejoin="round"/>
+  <path d="m166 157 4-36 30 34Z" fill="#ffd3c5"/>
+  <path d="m346 157-4-36-30 34Z" fill="#ffd3c5"/>
+  <ellipse cx="205" cy="258" rx="18" ry="24" fill="#2c2925"/>
+  <ellipse cx="307" cy="258" rx="18" ry="24" fill="#2c2925"/>
+  <path d="m256 284-18 16h36Z" fill="#7d2e22"/>
+  <path d="M256 301c-3 29-35 36-48 13M256 301c3 29 35 36 48 13" fill="none" stroke="#7d2e22" stroke-width="11" stroke-linecap="round"/>
+  <path d="M183 298 96 278M181 322l-91 8M329 298l87-20M331 322l91 8" fill="none" stroke="#7d2e22" stroke-width="9" stroke-linecap="round"/>
+  <path d="M176 375c48 29 112 29 160 0" fill="none" stroke="#fff7f2" stroke-width="14" stroke-linecap="round" opacity=".85"/>
+</svg>

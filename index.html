@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#fffaf2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="闹闹记录">
+    <title>闹闹数据记录本</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="page is-active" id="record-page" data-page="record" aria-labelledby="record-title">
+        <header class="page-header">
+          <p class="eyebrow">闹闹数据记录本</p>
+          <h1 id="record-title">记一条</h1>
+          <p>刚发完就记下来，30 秒搞定。</p>
+        </header>
+
+        <form id="record-form" novalidate>
+          <div class="field-group">
+            <label for="published-at">发布时间 <span class="required">必填</span></label>
+            <input id="published-at" name="publishedAt" type="datetime-local" required step="60">
+          </div>
+
+          <fieldset class="field-group">
+            <legend>账号 <span class="required">必填</span></legend>
+            <div class="choice-grid" id="account-options">
+              <button class="choice-button" type="button" data-account="内容号" aria-pressed="false">内容号</button>
+              <button class="choice-button" type="button" data-account="带货号" aria-pressed="false">带货号</button>
+            </div>
+            <input id="account" name="account" type="hidden">
+          </fieldset>
+
+          <div class="field-group">
+            <label for="title">标题或选题 <span class="required">必填</span></label>
+            <input id="title" name="title" type="text" maxlength="100" placeholder="比如：闹闹第一次吃冻干" required>
+          </div>
+
+          <div class="field-group" id="product-field" hidden>
+            <label for="product">带的什么品 <span class="required">必填</span></label>
+            <input id="product" name="product" type="text" maxlength="80" placeholder="输入或选择以前记过的商品" list="product-suggestions" autocomplete="off">
+            <datalist id="product-suggestions"></datalist>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>选题类型 <span class="optional">选填</span></legend>
+            <div class="tag-list" id="topic-options"></div>
+            <input id="topic-type" name="topicType" type="hidden">
+          </fieldset>
+
+          <div class="field-group">
+            <label for="production-hours">制作耗时 <span class="optional">选填</span></label>
+            <div class="input-with-unit">
+              <input id="production-hours" name="productionHours" type="number" inputmode="decimal" min="0" step="0.1" placeholder="比如 0.5">
+              <span>小时</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="notes">备注 <span class="optional">选填</span></label>
+            <textarea id="notes" name="notes" rows="3" maxlength="300" placeholder="有特别想记的再写"></textarea>
+          </div>
+
+          <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+          <button class="primary-button" type="submit">保存这条</button>
+        </form>
+      </section>
+
+      <section class="page" id="list-page" data-page="list" aria-labelledby="list-title" hidden>
+        <div id="list-view">
+          <header class="page-header">
+            <p class="eyebrow">按发布时间倒序</p>
+            <h1 id="list-title">列表</h1>
+            <p>点开一条，就能补数据或修改。</p>
+          </header>
+
+          <div class="filter-bar" id="account-filters" aria-label="按账号筛选">
+            <button class="filter-button is-selected" type="button" data-filter="全部" aria-pressed="true">全部</button>
+            <button class="filter-button" type="button" data-filter="内容号" aria-pressed="false">内容号</button>
+            <button class="filter-button" type="button" data-filter="带货号" aria-pressed="false">带货号</button>
+          </div>
+
+          <div class="record-list" id="record-list"></div>
+          <p class="empty-state" id="list-empty" hidden>还没有记录，先去记一条吧</p>
+        </div>
+
+        <div id="detail-view" hidden>
+          <header class="detail-header">
+            <button class="back-button" id="detail-back" type="button">← 返回列表</button>
+            <h1>编辑这条</h1>
+          </header>
+
+          <form id="detail-form" novalidate>
+            <input id="detail-id" type="hidden">
+
+            <div class="field-group">
+              <label for="detail-published-at">发布时间 <span class="required">必填</span></label>
+              <input id="detail-published-at" type="datetime-local" required step="60">
+            </div>
+
+            <fieldset class="field-group">
+              <legend>账号 <span class="required">必填</span></legend>
+              <div class="choice-grid" id="detail-account-options">
+                <button class="choice-button" type="button" data-detail-account="内容号" aria-pressed="false">内容号</button>
+                <button class="choice-button" type="button" data-detail-account="带货号" aria-pressed="false">带货号</button>
+              </div>
+              <input id="detail-account" type="hidden">
+            </fieldset>
+
+            <div class="field-group">
+              <label for="detail-title">标题或选题 <span class="required">必填</span></label>
+              <input id="detail-title" type="text" maxlength="100" required>
+            </div>
+
+            <div class="field-group" id="detail-product-field" hidden>
+              <label for="detail-product">带的什么品 <span class="required">必填</span></label>
+              <input id="detail-product" type="text" maxlength="80" list="product-suggestions" autocomplete="off">
+            </div>
+
+            <fieldset class="field-group">
+              <legend>选题类型 <span class="optional">选填</span></legend>
+              <div class="tag-list" id="detail-topic-options"></div>
+              <input id="detail-topic-type" type="hidden">
+            </fieldset>
+
+            <div class="field-group">
+              <label for="detail-production-hours">制作耗时 <span class="optional">选填</span></label>
+              <div class="input-with-unit">
+                <input id="detail-production-hours" type="number" inputmode="decimal" min="0" step="0.1">
+                <span>小时</span>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="detail-notes">备注 <span class="optional">选填</span></label>
+              <textarea id="detail-notes" rows="3" maxlength="300"></textarea>
+            </div>
+
+            <section class="metrics-section" aria-labelledby="metrics-title">
+              <div class="section-heading">
+                <h2 id="metrics-title">补数据</h2>
+                <p>照着创作者中心填，没看到的可以空着。</p>
+              </div>
+              <div id="metric-fields"></div>
+            </section>
+
+            <p class="form-message" id="detail-message" role="status" aria-live="polite"></p>
+            <div class="detail-actions">
+              <button class="primary-button" type="submit">保存修改</button>
+              <button class="danger-button" id="delete-record" type="button">删除这条</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="page" id="stats-page" data-page="stats" aria-labelledby="stats-title" hidden>
+        <header class="page-header">
+          <p class="eyebrow">看看最近什么效果好</p>
+          <h1 id="stats-title">统计</h1>
+          <p id="stats-description">只统计已经补过数据的视频。</p>
+        </header>
+
+        <p class="empty-state" id="stats-empty" hidden>先去记几条吧</p>
+
+        <div id="stats-content" hidden>
+          <section class="stats-section" aria-labelledby="overview-title">
+            <div class="stats-section-heading">
+              <h2 id="overview-title">本月概况</h2>
+            </div>
+            <div class="stat-card-grid" id="stat-cards"></div>
+          </section>
+
+          <section class="chart-card" aria-labelledby="recent-chart-title">
+            <div class="stats-section-heading">
+              <h2 id="recent-chart-title">最近 20 条数据</h2>
+              <p>按发布时间从左到右，时间越来越近。</p>
+            </div>
+            <div class="chart-host" id="recent-chart"></div>
+          </section>
+
+          <section class="chart-card" aria-labelledby="topic-chart-title">
+            <div class="stats-section-heading">
+              <h2 id="topic-chart-title">各选题类型平均数据</h2>
+            </div>
+            <div class="chart-host" id="topic-chart"></div>
+          </section>
+
+          <section class="chart-card" id="commission-chart-card" aria-labelledby="commission-chart-title">
+            <div class="stats-section-heading">
+              <h2 id="commission-chart-title">各商品总佣金</h2>
+              <p>按佣金从高到低排列。</p>
+            </div>
+            <div class="chart-host" id="commission-chart"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="backup-page" data-page="backup" aria-labelledby="backup-title" hidden>
+        <header class="page-header">
+          <p class="eyebrow">数据只保存在这台设备</p>
+          <h1 id="backup-title">备份</h1>
+          <p>定期存一份文件，换手机也能恢复。</p>
+        </header>
+
+        <p class="backup-status" id="backup-status">还没有备份过</p>
+
+        <div class="backup-actions">
+          <section class="backup-card" aria-labelledby="csv-title">
+            <h2 id="csv-title">导出 Excel</h2>
+            <p>导出 CSV 文件，可以直接用 Excel 打开。</p>
+            <button class="secondary-button" id="export-csv" type="button">导出 Excel</button>
+          </section>
+
+          <section class="backup-card" aria-labelledby="json-backup-title">
+            <h2 id="json-backup-title">备份数据</h2>
+            <p>下载完整 JSON 文件，建议发到微信文件传输助手。</p>
+            <button class="primary-button" id="export-backup" type="button">备份数据</button>
+          </section>
+
+          <section class="backup-card" aria-labelledby="restore-title">
+            <h2 id="restore-title">恢复数据</h2>
+            <p>选择以前备份的 JSON 文件，会覆盖现在的数据。</p>
+            <button class="secondary-button" id="choose-restore-file" type="button">选择备份文件</button>
+            <input id="restore-file" type="file" accept=".json,application/json" hidden>
+          </section>
+        </div>
+
+        <p class="form-message backup-message" id="backup-message" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="主要功能">
+      <button type="button" class="nav-button is-active" data-target="record" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">＋</span>
+        <span>记一条</span>
+      </button>
+      <button type="button" class="nav-button" data-target="list">
+        <span class="nav-icon" aria-hidden="true">☷</span>
+        <span>列表</span>
+      </button>
+      <button type="button" class="nav-button" data-target="stats">
+        <span class="nav-icon" aria-hidden="true">▥</span>
+        <span>统计</span>
+      </button>
+      <button type="button" class="nav-button" data-target="backup">
+        <span class="nav-icon" aria-hidden="true">⇩</span>
+        <span>备份</span>
+      </button>
+    </nav>
+  </body>
+</html>
